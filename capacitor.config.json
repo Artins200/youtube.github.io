@@ -1,0 +1,6 @@
+{
+  "appId": "com.offline.youtube",
+  "appName": "YouTube",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
