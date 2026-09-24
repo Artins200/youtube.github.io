@@ -7,9 +7,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0f0f0f">
   <title>YouTube</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/youtube.css">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/youtube.css">
 </head>
 <body>
 
@@ -636,15 +636,15 @@
   </div><!-- #app-viewport -->
 
   <!-- Scripts -->
-  <script src="/js/video-generator.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/app.js"></script>
+  <script src="./js/video-generator.js"></script>
+  <script src="./js/db.js"></script>
+  <script src="./js/app.js"></script>
 
   <!-- Service Worker registration for offline functionality -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('./sw.js')
           .then((reg) => console.log('ServiceWorker registered:', reg.scope))
           .catch((err) => console.log('ServiceWorker failed:', err));
       });

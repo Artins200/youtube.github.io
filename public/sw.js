@@ -1,14 +1,14 @@
-const CACHE_NAME = 'youtube-offline-v1';
+const CACHE_NAME = 'youtube-offline-v2';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/css/youtube.css',
-  '/js/app.js',
-  '/js/db.js',
-  '/js/video-generator.js',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  './',
+  './index.html',
+  './css/youtube.css',
+  './js/app.js',
+  './js/db.js',
+  './js/video-generator.js',
+  './manifest.json',
+  './icons/icon-192.svg',
+  './icons/icon-512.svg'
 ];
 
 self.addEventListener('install', (event) => {
