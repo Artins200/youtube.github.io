@@ -1,0 +1,13 @@
+{
+  "name": "youtube-mobile-offline",
+  "version": "1.0.0",
+  "description": "Pixel-perfect offline YouTube mobile app with local uploads, Shorts, video player, playback speed, and IndexedDB storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["youtube", "clone", "offline", "shorts", "mobile", "pwa"],
+  "author": "",
+  "license": "MIT"
+}
