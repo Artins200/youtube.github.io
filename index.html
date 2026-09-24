@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f0f">
+  <title>YouTube</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/youtube.css">
+</head>
+<body>
+
+  <!-- Floating Desktop Frame Switcher (for PC view) -->
+  <aside class="desktop-controls-bar" aria-label="Управление видом">
+    <button class="desktop-btn" id="btn-toggle-frame" title="Переключить рамку смартфона">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+      <span id="frame-btn-text">Рамка телефона</span>
+    </button>
+    <button class="desktop-btn" id="btn-toggle-theme" title="Сменить тему">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      <span>Тема</span>
+    </button>
+  </aside>
+
+  <!-- Mobile Viewport Container -->
+  <div id="app-viewport" class="device-frame">
+
+    <!-- Mock Phone Status Bar (Active in Phone Frame mode) -->
+    <div class="phone-status-bar">
+      <span id="phone-clock">12:30</span>
+      <div class="phone-dynamic-island"></div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.64 10.56 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </div>
+    </div>
+
+    <div id="main-screen-container">
+
+      <!-- Top Header (Standard YouTube Mobile) -->
+      <header class="yt-header" id="app-header">
+        <div class="yt-logo-group" id="btn-logo-home">
+          <!-- Official YouTube SVG Logo -->
+          <svg class="yt-logo-icon" viewBox="0 0 68 48">
+            <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#FF0000"/>
+            <polygon points="45,24 27,14 27,34" fill="#FFFFFF"/>
+          </svg>
+          <span class="yt-logo-text">YouTube</span>
+        </div>
+
+        <div class="yt-header-actions">
+          <!-- Cast button -->
+          <button class="icon-btn" id="btn-cast" title="Трансляция">
+            <svg viewBox="0 0 24 24"><path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+          </button>
+          <!-- Notification Bell -->
+          <button class="icon-btn" id="btn-notifications" title="Уведомления">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+            <span class="notif-badge"></span>
+          </button>
+          <!-- Search Icon -->
+          <button class="icon-btn" id="btn-open-search" title="Поиск">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </button>
+          <!-- User Profile Avatar -->
+          <div class="user-avatar-small" id="btn-header-profile" title="Ваш профиль">В</div>
+        </div>
+      </header>
+
+      <!-- Category Filter Pills Bar -->
+      <nav class="yt-chips-container" id="category-chips">
+        <button class="yt-chip active" data-category="Все">Все</button>
+        <button class="yt-chip" data-category="Мои видео">Мои видео</button>
+        <button class="yt-chip" data-category="Наука">Наука</button>
+        <button class="yt-chip" data-category="Обучение">Обучение</button>
+        <button class="yt-chip" data-category="Музыка">Музыка</button>
+        <button class="yt-chip" data-category="Лайфхаки">Лайфхаки</button>
+        <button class="yt-chip" data-category="Животные">Животные</button>
+      </nav>
+
+      <!-- Main Tabs Content Container -->
+      <main class="tab-views">
+
+        <!-- TAB 1: ГЛАВНАЯ (HOME) -->
+        <section id="view-home" class="view-content active">
+          <!-- Offline indicator banner -->
+          <div class="offline-status-banner">
+            <div class="offline-pill">
+              <span class="offline-pill-dot"></span>
+              <span>100% Оффлайн режим • Локальное хранилище</span>
+            </div>
+            <span id="quick-storage-info" style="font-size:11px; color:#94a3b8;">IndexedDB</span>
+          </div>
+
+          <!-- Video Feed List -->
+          <div id="home-feed-container">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- TAB 2: SHORTS (DEDICATED FULL VIEW) -->
+        <section id="view-shorts" class="view-content">
+          <div class="shorts-container" id="shorts-player-container">
+            <video id="shorts-video" class="shorts-video-player" playsinline loop preload="auto"></video>
+            
+            <!-- Tap to pause/play layer -->
+            <div class="shorts-tap-layer" id="shorts-tap-area"></div>
+            
+            <!-- Animated pulse icon for play/pause -->
+            <div class="shorts-pulse-icon" id="shorts-pulse-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+
+            <!-- Quick Prev/Next Navigation Controls for Shorts -->
+            <div class="shorts-nav-arrows">
+              <button class="shorts-nav-btn" id="btn-shorts-prev" title="Предыдущий Short">▲</button>
+              <button class="shorts-nav-btn" id="btn-shorts-next" title="Следующий Short">▼</button>
+            </div>
+
+            <!-- Right Action Sidebar -->
+            <div class="shorts-action-bar">
+              <!-- Like -->
+              <button class="shorts-action-btn" id="shorts-btn-like">
+                <div class="shorts-action-circle">
+                  <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                </div>
+                <span class="shorts-action-label" id="shorts-like-count">245 тыс.</span>
+              </button>
+
+              <!-- Dislike -->
+              <button class="shorts-action-btn" id="shorts-btn-dislike">
+                <div class="shorts-action-circle">
+                  <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+                </div>
+                <span class="shorts-action-label">Не нравится</span>
+              </button>
+
+              <!-- Comments -->
+              <button class="shorts-action-btn" id="shorts-btn-comments">
+                <div class="shorts-action-circle">
+                  <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                </div>
+                <span class="shorts-action-label">1,4 тыс.</span>
+              </button>
+
+              <!-- Share -->
+              <button class="shorts-action-btn" id="shorts-btn-share">
+                <div class="shorts-action-circle">
+                  <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+                </div>
+                <span class="shorts-action-label">Поделиться</span>
+              </button>
+
+              <!-- Remix / Sound Disc -->
+              <div class="shorts-sound-disc" id="shorts-sound-disc">
+                <div style="width:100%;height:100%;background:linear-gradient(45deg,#ec4899,#8b5cf6);display:flex;align-items:center;justify-content:center;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Video Metadata -->
+            <div class="shorts-bottom-overlay">
+              <div class="shorts-channel-row">
+                <div class="shorts-avatar" id="shorts-channel-avatar">T</div>
+                <span class="shorts-channel-name" id="shorts-channel-name">@TechHacks</span>
+                <button class="shorts-subscribe-btn" id="shorts-subscribe-btn">Подписаться</button>
+              </div>
+              <p class="shorts-title-text" id="shorts-title">Заголовок Shorts #shorts</p>
+              <div class="shorts-sound-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                <span id="shorts-sound-name">Оригинальный звук</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: ПОДПИСКИ (SUBSCRIPTIONS) -->
+        <section id="view-subscriptions" class="view-content">
+          <div style="padding: 16px 14px 10px 14px;">
+            <div style="display:flex; gap:14px; overflow-x:auto; padding-bottom:12px; scrollbar-width:none;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;">
+                <div style="width:54px; height:54px; border-radius:50%; background:#1a73e8; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; border:2px solid #3ea6ff;">К</div>
+                <span style="font-size:11px; max-width:60px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">Космос</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;">
+                <div style="width:54px; height:54px; border-radius:50%; background:#10b981; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; border:2px solid #3ea6ff;">C</div>
+                <span style="font-size:11px; max-width:60px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">CodeMaster</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;">
+                <div style="width:54px; height:54px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; border:2px solid #3ea6ff;">L</div>
+                <span style="font-size:11px; max-width:60px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">Lo-Fi Zone</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;">
+                <div style="width:54px; height:54px; border-radius:50%; background:#ec4899; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; border:2px solid #3ea6ff;">T</div>
+                <span style="font-size:11px; max-width:60px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">TechHacks</span>
+              </div>
+            </div>
+          </div>
+          <div id="subscriptions-feed-container"></div>
+        </section>
+
+        <!-- TAB 4: ВЫ (YOU / LIBRARY) -->
+        <section id="view-you" class="view-content">
+          <div class="library-header">
+            <div class="profile-avatar-large">В</div>
+            <div class="profile-info">
+              <h2>Вы (Локальный пользователь)</h2>
+              <p>@offline_creator • Создатель контента</p>
+            </div>
+          </div>
+
+          <!-- Offline Storage Stats Section -->
+          <div class="library-section">
+            <div class="storage-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:13px; font-weight:600;">Локальное хранилище IndexedDB</span>
+                <span id="storage-mb-label" style="font-size:12px; color:#10b981; font-weight:700;">0.0 МБ</span>
+              </div>
+              <div class="storage-bar">
+                <div class="storage-bar-fill" id="storage-progress-bar"></div>
+              </div>
+              <p style="font-size:11px; color:var(--yt-text-secondary); margin-top:4px;">
+                Все ваши загруженные видео и шортс хранятся прямо в постоянной памяти вашего устройства. Интернет для просмотра не нужен!
+              </p>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+              <button class="action-pill-btn" id="btn-quick-upload-action" style="flex:1; justify-content:center; padding:10px; background:#2563eb; color:#fff; border:none; font-weight:600;">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Выложить видео
+              </button>
+              <button class="action-pill-btn" id="btn-reset-demo" style="flex:1; justify-content:center; padding:10px;">
+                🔄 Сброс демо
+              </button>
+            </div>
+          </div>
+
+          <!-- Your Uploaded Videos List -->
+          <div class="library-section">
+            <div class="section-title">
+              <span>Ваши видео (<span id="user-video-count">0</span>)</span>
+            </div>
+            <div id="user-videos-list" style="display:flex; flex-direction:column; gap:10px;">
+              <!-- Filled dynamically -->
+            </div>
+          </div>
+
+          <!-- Watch History -->
+          <div class="library-section">
+            <div class="section-title">
+              <span>История просмотров</span>
+              <button id="btn-clear-history" style="background:none; border:none; color:var(--yt-blue); font-size:12px; cursor:pointer;">Очистить</button>
+            </div>
+            <div id="history-items-container" style="display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; padding-bottom:8px;">
+              <!-- History thumbnails -->
+            </div>
+          </div>
+
+          <!-- How It Works / Offline Explanation -->
+          <div class="library-section" style="padding-bottom:30px;">
+            <div class="section-title">
+              <span>ℹ️ Как это устроено</span>
+            </div>
+            <div style="background:var(--yt-surface); border-radius:12px; padding:14px; font-size:12px; line-height:1.5; color:var(--yt-text-secondary);">
+              <p style="margin-bottom:8px; color:var(--yt-text-primary); font-weight:600;">📱 Способы использования:</p>
+              <p>1. <b>Установка на телефон как приложение (PWA):</b> откройте сайт в Safari на iPhone (кнопка «Поделиться» → «На экран Домой») или в Chrome на Android (меню три точки → «Установить приложение»). Приложение будет работать на весь экран без полос браузера!</p>
+              <p style="margin-top:6px;">2. <b>Полный оффлайн:</b> благодаря Service Worker и базе данных IndexedDB приложение запускается даже в режиме «В самолете».</p>
+              <p style="margin-top:6px;">3. <b>Ваши ролики:</b> нажимайте <b>(+)</b> внизу экрана, выбирайте видео из галереи телефона. Они сохраняются локально в память устройства и никуда не отправляются в интернет.</p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Bottom Navigation Bar (YouTube 1:1) -->
+      <nav class="yt-bottom-bar" id="bottom-nav">
+        <!-- Главная -->
+        <button class="nav-item active" data-view="home">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span>Главная</span>
+        </button>
+
+        <!-- Shorts -->
+        <button class="nav-item" data-view="shorts">
+          <svg viewBox="0 0 24 24"><path d="M17.77 10.32l-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zM10 14.5v-5l4.5 2.5-4.5 2.5z"/></svg>
+          <span>Shorts</span>
+        </button>
+
+        <!-- Create (+) -->
+        <button class="nav-item" id="btn-create" title="Создать">
+          <div class="nav-create-btn">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+        </button>
+
+        <!-- Подписки -->
+        <button class="nav-item" data-view="subscriptions">
+          <svg viewBox="0 0 24 24"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"/></svg>
+          <span>Подписки</span>
+        </button>
+
+        <!-- Вы -->
+        <button class="nav-item" data-view="you">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+          <span>Вы</span>
+        </button>
+      </nav>
+
+    </div><!-- #main-screen-container -->
+
+
+    <!-- FULL WATCH VIDEO PLAYER SCREEN -->
+    <section id="watch-screen" aria-label="Просмотр видео">
+      <!-- 16:9 Video Player Viewport -->
+      <div class="player-wrapper" id="player-wrapper">
+        <video id="main-video-player" playsinline preload="auto"></video>
+        
+        <!-- Controls Overlay -->
+        <div class="player-controls-overlay" id="player-controls-overlay">
+          <!-- Top Row -->
+          <div class="player-top-bar">
+            <button class="icon-btn" id="btn-player-back" title="Назад">
+              <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <!-- Playback Speed Badge -->
+              <button class="speed-badge-btn" id="btn-player-speed-badge" title="Скорость воспроизведения">1x</button>
+              <!-- Settings Gear -->
+              <button class="icon-btn" id="btn-player-settings" title="Настройки видео">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Center Controls (10s back, Play/Pause, 10s forward) -->
+          <div class="player-center-controls">
+            <!-- -10s -->
+            <button class="control-circle-btn" id="btn-seek-back-10" title="10 секунд назад">
+              <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.7-.42-.61 1.61-1.14h.67V16zm4.27-2.31c0 .5-.08.91-.23 1.23-.15.31-.37.56-.66.73-.29.17-.65.25-1.09.25-.43 0-.79-.08-1.08-.25-.29-.17-.51-.42-.66-.73-.15-.32-.23-.73-.23-1.23v-.93c0-.5.08-.91.23-1.23.15-.32.37-.56.66-.73.29-.17.65-.26 1.08-.26.44 0 .8.09 1.09.26.29.17.51.41.66.73.15.32.23.73.23 1.23v.93zm-.96-.98c0-.44-.06-.77-.17-1-.11-.23-.28-.35-.52-.35-.24 0-.42.11-.53.35-.11.23-.17.56-.17 1v1.03c0 .44.06.77.17 1 .11.23.29.35.53.35.24 0 .41-.12.52-.35.11-.23.17-.56.17-1v-1.03z"/></svg>
+            </button>
+
+            <!-- Play / Pause -->
+            <button class="control-circle-btn play-pause" id="btn-player-toggle" title="Воспроизвести / Пауза">
+              <svg id="icon-player-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="icon-player-pause" style="display:none;" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+
+            <!-- +10s -->
+            <button class="control-circle-btn" id="btn-seek-forward-10" title="10 секунд вперед">
+              <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.7-.42-.61 1.61-1.14h.67V16zm4.27-2.31c0 .5-.08.91-.23 1.23-.15.31-.37.56-.66.73-.29.17-.65.25-1.09.25-.43 0-.79-.08-1.08-.25-.29-.17-.51-.42-.66-.73-.15-.32-.23-.73-.23-1.23v-.93c0-.5.08-.91.23-1.23.15-.32.37-.56.66-.73.29-.17.65-.26 1.08-.26.44 0 .8.09 1.09.26.29.17.51.41.66.73.15.32.23.73.23 1.23v.93zm-.96-.98c0-.44-.06-.77-.17-1-.11-.23-.28-.35-.52-.35-.24 0-.42.11-.53.35-.11.23-.17.56-.17 1v1.03c0 .44.06.77.17 1 .11.23.29.35.53.35.24 0 .41-.12.52-.35.11-.23.17-.56.17-1v-1.03z"/></svg>
+            </button>
+          </div>
+
+          <!-- Bottom Row: Scrubber & Time -->
+          <div class="player-bottom-bar">
+            <!-- Scrubber Seek Bar -->
+            <div class="progress-container" id="player-progress-container">
+              <div class="progress-track">
+                <div class="progress-buffer" id="player-progress-buffer"></div>
+                <div class="progress-current" id="player-progress-current"></div>
+                <div class="progress-thumb" id="player-progress-thumb"></div>
+              </div>
+            </div>
+
+            <div class="time-and-controls">
+              <span id="player-time-display">00:00 / 00:00</span>
+              <button class="icon-btn" id="btn-player-fullscreen" title="На весь экран" style="padding:2px;">
+                <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Watch Details Below Video -->
+      <div class="watch-content">
+        <h1 class="watch-title" id="watch-title">Название видео</h1>
+        
+        <div class="watch-meta-line">
+          <span id="watch-views">1,2 млн просмотров</span>
+          <span>•</span>
+          <span id="watch-date">3 дня назад</span>
+        </div>
+
+        <!-- Channel Row -->
+        <div class="watch-channel-card">
+          <div class="channel-info-left">
+            <div class="channel-avatar" id="watch-channel-avatar">К</div>
+            <div>
+              <div class="channel-name-txt" id="watch-channel-name">Космос Онлайн</div>
+              <div class="channel-subs-txt" id="watch-channel-subs">2,4 млн подписчиков</div>
+            </div>
+          </div>
+          <button class="subscribe-btn" id="watch-subscribe-btn">Подписаться</button>
+        </div>
+
+        <!-- Action Carousel Buttons -->
+        <div class="action-buttons-row">
+          <!-- Like -->
+          <button class="action-pill-btn" id="watch-btn-like">
+            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            <span id="watch-like-count">124 тыс.</span>
+          </button>
+          
+          <!-- Dislike -->
+          <button class="action-pill-btn" id="watch-btn-dislike">
+            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          </button>
+
+          <!-- Share -->
+          <button class="action-pill-btn" id="watch-btn-share">
+            <svg viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg>
+            <span>Поделиться</span>
+          </button>
+
+          <!-- Offline Download Status -->
+          <button class="action-pill-btn active" id="watch-btn-download">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+            <span>Оффлайн</span>
+          </button>
+
+          <!-- Remix -->
+          <button class="action-pill-btn" id="watch-btn-remix">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-4-4h8l-4 4zm4-7H8V8h8v2z"/></svg>
+            <span>Ремикс</span>
+          </button>
+
+          <!-- Save -->
+          <button class="action-pill-btn" id="watch-btn-save">
+            <svg viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z"/></svg>
+            <span>Сохранить</span>
+          </button>
+        </div>
+
+        <!-- Description Accordion Box -->
+        <div class="description-box" id="watch-desc-box">
+          <p class="desc-text collapsed" id="watch-desc-text">Описание видео...</p>
+          <span style="font-size:11px; font-weight:600; color:var(--yt-blue); margin-top:4px; display:inline-block;" id="watch-desc-toggle">Еще</span>
+        </div>
+
+        <!-- Comments Preview Card -->
+        <div class="comments-preview-box" id="watch-comments-box">
+          <div class="comments-header-row">
+            <span class="comments-count-title">Комментарии <span id="watch-comments-count">3</span></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+          </div>
+          <div class="first-comment-snippet">
+            <div style="width:24px; height:24px; border-radius:50%; background:#0284c7; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">А</div>
+            <span style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; flex:1;" id="watch-first-comment">Очень круто сделано! 🔥</span>
+          </div>
+        </div>
+
+        <!-- Recommended / Next Videos Feed -->
+        <div style="margin-top:16px;">
+          <h3 style="font-size:14px; font-weight:700; margin-bottom:12px;">Следующие видео</h3>
+          <div id="watch-up-next-feed"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- MODAL: PLAYBACK SPEED & SETTINGS -->
+    <div class="modal-overlay" id="modal-settings">
+      <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">
+          <span>Настройки воспроизведения</span>
+          <button class="icon-btn" id="btn-close-settings">✕</button>
+        </div>
+
+        <!-- Скорость воспроизведения -->
+        <div style="margin-bottom:16px;">
+          <span style="font-size:13px; font-weight:600; color:var(--yt-text-secondary); text-transform:uppercase; letter-spacing:0.5px;">Скорость воспроизведения</span>
+          <div class="sheet-option-list" style="margin-top:8px;" id="speed-options-list">
+            <div class="sheet-option-item" data-speed="0.25"><span class="opt-label">0.25x (Очень медленно)</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item" data-speed="0.5"><span class="opt-label">0.5x</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item" data-speed="0.75"><span class="opt-label">0.75x</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item selected" data-speed="1.0"><span class="opt-label">Обычная (1.0x)</span><span class="opt-check">✓</span></div>
+            <div class="sheet-option-item" data-speed="1.25"><span class="opt-label">1.25x</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item" data-speed="1.5"><span class="opt-label">1.5x</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item" data-speed="1.75"><span class="opt-label">1.75x</span><span class="opt-check"></span></div>
+            <div class="sheet-option-item" data-speed="2.0"><span class="opt-label">2.0x (Максимально быстро)</span><span class="opt-check"></span></div>
+          </div>
+        </div>
+
+        <!-- Качество -->
+        <div style="margin-top:12px; border-top:1px solid var(--yt-border); padding-top:12px;">
+          <span style="font-size:13px; font-weight:600; color:var(--yt-text-secondary); text-transform:uppercase; letter-spacing:0.5px;">Качество видео</span>
+          <div class="sheet-option-list" style="margin-top:8px;">
+            <div class="sheet-option-item selected"><span>1080p Full HD (Оригинал)</span> ✓</div>
+            <div class="sheet-option-item"><span>720p HD</span></div>
+            <div class="sheet-option-item"><span>480p</span></div>
+            <div class="sheet-option-item"><span>Авто (высокое)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MODAL: UPLOAD / CREATE VIDEO (BOTTOM SHEET) -->
+    <div class="modal-overlay" id="modal-upload">
+      <div class="bottom-sheet" style="max-height:88vh;">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">
+          <span>Опубликовать видео локально</span>
+          <button class="icon-btn" id="btn-close-upload">✕</button>
+        </div>
+
+        <form class="upload-form" id="upload-video-form" onsubmit="return false;">
+          <!-- Format Type Choice: Regular Video vs Shorts -->
+          <div class="form-group">
+            <label>Формат публикации</label>
+            <div class="upload-type-selector">
+              <button type="button" class="type-choice-btn selected" id="type-btn-video" data-type="video">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>
+                Обычное видео (16:9)
+              </button>
+              <button type="button" class="type-choice-btn" id="type-btn-short" data-type="short">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.77 10.32l-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25z"/></svg>
+                Shorts (вертикальное)
+              </button>
+            </div>
+          </div>
+
+          <!-- Video File Picker Dropzone -->
+          <div class="form-group">
+            <label>Выберите видеофайл с устройства</label>
+            <div class="file-dropzone" id="dropzone-trigger">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="#3ea6ff"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+              <span id="file-drop-text" style="font-size:13px; font-weight:500;">Нажмите, чтобы выбрать видео из галереи</span>
+              <span style="font-size:11px; color:var(--yt-text-secondary);">Поддерживаются MP4, WebM, MOV, AVI</span>
+            </div>
+            <div style="text-align:center; margin-top:6px;">
+              <button type="button" id="btn-quick-generate-sample" style="background:none; border:none; color:var(--yt-blue); font-size:12px; font-weight:600; cursor:pointer;">
+                ⚡ Или сгенерировать тестовое видео в 1 клик
+              </button>
+            </div>
+            <input type="file" id="input-video-file" accept="video/*" style="display:none;">
+          </div>
+
+          <!-- Real-time Video Preview if loaded -->
+          <div id="upload-preview-container" style="display:none; margin-top:4px;">
+            <video id="upload-preview-video" style="width:100%; max-height:160px; border-radius:8px; background:#000;" controls></video>
+          </div>
+
+          <!-- Metadata Fields -->
+          <div class="form-group">
+            <label for="input-video-title">Название</label>
+            <input type="text" id="input-video-title" class="form-input" placeholder="Укажите название видео" required>
+          </div>
+
+          <div class="form-group">
+            <label for="input-video-channel">Имя канала</label>
+            <input type="text" id="input-video-channel" class="form-input" value="Мой Канал" required>
+          </div>
+
+          <div class="form-group">
+            <label for="input-video-category">Категория</label>
+            <select id="input-video-category" class="form-input">
+              <option value="Мои видео">Мои видео</option>
+              <option value="Наука">Наука</option>
+              <option value="Обучение">Обучение</option>
+              <option value="Музыка">Музыка</option>
+              <option value="Лайфхаки">Лайфхаки</option>
+              <option value="Животные">Животные</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="input-video-desc">Описание</label>
+            <textarea id="input-video-desc" class="form-input" rows="2" placeholder="Добавьте описание или теги #shorts..."></textarea>
+          </div>
+
+          <!-- Upload / Processing Status Bar -->
+          <div id="upload-progress-box" style="display:none; margin-top:6px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span id="upload-status-text">Сохранение в IndexedDB...</span>
+              <span id="upload-status-percent">0%</span>
+            </div>
+            <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+              <div id="upload-progress-bar" style="width:0%; height:100%; background:var(--yt-blue); transition:width 0.2s;"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btn-submit-upload">
+            Опубликовать видео
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- MODAL: COMMENTS SHEET -->
+    <div class="modal-overlay" id="modal-comments">
+      <div class="bottom-sheet" id="comments-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">
+          <span>Комментарии</span>
+          <button class="icon-btn" id="btn-close-comments">✕</button>
+        </div>
+
+        <div class="comment-list" id="modal-comments-list">
+          <!-- Comments items -->
+        </div>
+
+        <div class="comment-input-row">
+          <input type="text" class="form-input" id="input-new-comment" placeholder="Оставьте комментарий..." style="flex:1;">
+          <button class="btn-primary" id="btn-post-comment" style="margin:0; padding:10px 16px; border-radius:20px;">Отправить</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SEARCH OVERLAY -->
+    <div id="search-overlay">
+      <div class="search-header">
+        <button class="icon-btn" id="btn-close-search">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <div class="search-input-box">
+          <input type="text" id="input-search-query" placeholder="Введите поисковый запрос..." autofocus>
+          <button class="icon-btn" id="btn-clear-search" style="display:none; padding:2px;">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="search-results-list" id="search-results-container">
+        <!-- Filtered results -->
+      </div>
+    </div>
+
+  </div><!-- #app-viewport -->
+
+  <!-- Scripts -->
+  <script src="./js/video-generator.js"></script>
+  <script src="./js/db.js"></script>
+  <script src="./js/app.js"></script>
+
+  <!-- Service Worker registration for offline functionality -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('ServiceWorker registered:', reg.scope))
+          .catch((err) => console.log('ServiceWorker failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
